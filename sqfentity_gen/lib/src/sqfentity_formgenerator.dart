@@ -16,20 +16,17 @@ class Imports {
 
 class SqfEntityFormGenerator extends GeneratorForAnnotation<SqfEntityBuilder> {
   @override
-  String? generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
+  String? generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) {
     final model = annotation.read('model').objectValue;
 
     // When testing, you can uncomment the test line to make sure everything's working properly
     //return '// MODEL -> ${tablemodel.toString()}';
 
-    var instanceName =
-        'SqfEntityTable'; //        element.toString().replaceAll('SqfEntityTable', '').trim();
+    var instanceName = 'SqfEntityTable'; //        element.toString().replaceAll('SqfEntityTable', '').trim();
     instanceName = toCamelCase(instanceName);
 
     final builder = SqfEntityModelBuilder(model, instanceName);
-    print(
-        '-------------------------------------------------------FormBuilder: $instanceName');
+    print('-------------------------------------------------------FormBuilder: $instanceName');
     final dbModel = builder.toModel();
 
     if (dbModel.formTables!.isEmpty) {
@@ -37,12 +34,9 @@ class SqfEntityFormGenerator extends GeneratorForAnnotation<SqfEntityBuilder> {
     }
 
     final modelStr = StringBuffer();
-    final String path = element.source
-        .toString()
-        .substring(element.source.toString().lastIndexOf('/') + 1);
+    final String path = buildStep.inputId.pathSegments.last;
     if (dbModel.ignoreForFile != null && dbModel.ignoreForFile!.isNotEmpty) {
-      modelStr
-          .writeln('// ignore_for_file: ${dbModel.ignoreForFile!.join(', ')}');
+      modelStr.writeln('// ignore_for_file: ${dbModel.ignoreForFile!.join(', ')}');
     }
     // print('${tables[0].modelName} Model recognized successfully');
     modelStr.writeln('part of \'$path\';');
